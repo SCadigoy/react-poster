@@ -11,7 +11,7 @@ function PostsList({ isPosting, onStopPosting }) {
     useEffect(() => {
         async function fetchPosts() {
             setLoading(true);
-            const response = await fetch('http://localhost:8080/posts');
+            const response = await fetch('https://react-sample-backend.vercel.app/posts');
             const resData = await response.json();
             setPosts(resData.posts);
             setLoading(false);
@@ -23,7 +23,7 @@ function PostsList({ isPosting, onStopPosting }) {
     function addPostHandler(postData) {
         async function addPost() {
             setLoading(true);
-            const response = await fetch('http://localhost:8080/posts', {
+            const response = await fetch('https://react-sample-backend.vercel.app/posts', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -41,7 +41,7 @@ function PostsList({ isPosting, onStopPosting }) {
     const handleEditPost = (id, newAuthor, newBody) => {
         async function editPost() {
             setLoading(true);
-            await fetch(`http://localhost:8080/posts/${id}`, {
+            await fetch(`https://react-sample-backend.vercel.app/posts/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -60,7 +60,7 @@ function PostsList({ isPosting, onStopPosting }) {
     const handleDeletePost = (id) => {
         async function deletePost() {
             setLoading(true);
-            await fetch(`http://localhost:8080/posts/${id}`, {
+            await fetch(`https://react-sample-backend.vercel.app/posts/${id}`, {
                 method: 'DELETE'
             });
             setLoading(false);
