@@ -38,23 +38,20 @@ function PostsList({ isPosting, onStopPosting }) {
         addPost();
     }
 
-    const handleEditPost = (id, newAuthor, newBody) => {
-        async function editPost() {
-            setLoading(true);
-            await fetch(`https://react-sample-backend.vercel.app/posts/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ author: newAuthor, body: newBody })
-            });
-            setLoading(false);
-            setPosts(posts.map(post => 
-                post.id === id ? { ...post, author: newAuthor, body: newBody } : post
-            ));
-        }
-
-        editPost();
+    const handleEditPost = async (id, newAuthor, newBody) => {
+        setLoading(true);
+        const response = await fetch(`https://react-sample-backend.vercel.app/posts/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ author: newAuthor, body: newBody })
+        });
+        const updatedPost = await response.json();
+        setLoading(false);
+        setPosts(posts.map(post => 
+            post.id === id ? updatedPost : post
+        ));
     };
 
     const handleDeletePost = (id) => {
