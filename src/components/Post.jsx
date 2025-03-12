@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-function Post({ author, body, onEdit, onDelete }) {
+function Post(props) {
+    const storedDeletedState = localStorage.getItem(`post-${props.author}`) === 'true';
+    const [isDeleted, setIsDeleted] = useState(storedDeletedState);
     const [isEditing, setIsEditing] = useState(false);
-    const [editedAuthor, setEditedAuthor] = useState(author);
-    const [editedBody, setEditedBody] = useState(body);
+    const [editedBody, setEditedBody] = useState(localStorage.getItem(`post-${props.author}-body`) || props.body);
+    const [editedAuthor, setEditedAuthor] = useState(localStorage.getItem(`post-${props.author}-author`) || props.author);
+
+    useEffect(() => {
+        localStorage.setItem(`post-${props.author}`, isDeleted);
+    }, [isDeleted, props.author]);
+
+    function handleDelete() {
+        setIsDeleted(true);
+    }
 
     function handleEdit() {
         setIsEditing(true);
@@ -11,36 +21,44 @@ function Post({ author, body, onEdit, onDelete }) {
 
     function handleSave() {
         setIsEditing(false);
-        onEdit(editedAuthor, editedBody);
+        localStorage.setItem(`post-${props.author}-body`, editedBody);
+        localStorage.setItem(`post-${props.author}-author`, editedAuthor);
     }
 
-	
+    function handleBodyChange(event) {
+        setEditedBody(event.target.value);
+    }
+
+    function handleAuthorChange(event) {
+        setEditedAuthor(event.target.value);
+    }
+
+    if (isDeleted) {
+        return null;
+    }
+
     return (
-        <li className='post'>
+        <li className="post">
             {isEditing ? (
                 <input
-                    className='author'
+                    type="text"
                     value={editedAuthor}
-                    onChange={(e) => setEditedAuthor(e.target.value)}
+                    onChange={handleAuthorChange}
                 />
             ) : (
-                <p className='author'>{author}</p>
+                <p className="author">{editedAuthor}</p>
             )}
             {isEditing ? (
-                <input style={{ maxWidth: '210px'}}
-                    className='text'
-                    value={editedBody}
-                    onChange={(e) => setEditedBody(e.target.value)}
-                />
+                <textarea value={editedBody} onChange={handleBodyChange} />
             ) : (
-                <p className='text'>{body}</p>
+                <p className="text">{editedBody}</p>
             )}
             {isEditing ? (
                 <button className='button' onClick={handleSave}>Save</button>
             ) : (
                 <button className='button' onClick={handleEdit}>Edit</button>
             )}
-            <button className='button' onClick={onDelete}>Delete</button>
+            <button className='button' onClick={handleDelete}>Delete</button>
         </li>
     );
 }
